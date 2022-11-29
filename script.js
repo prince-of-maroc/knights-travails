@@ -62,6 +62,16 @@ function convertToCoordinates(chessNotion){
     return [x,parseInt(y)]
 }
 
-function knightMoves(spaceA, spaceB){
-    //    
+function NodeFactory(position){
+    return {
+        chessN: position,
+        coordN: convertToCoordinates(position)
+    }
 }
+
+function knightMoves(spaceA, spaceB, knightDecisionTree = {}){
+    // Assume spaces are given in chess notation
+    let positionA = NodeFactory(spaceA);
+}
+
+knightMoves('a1', 'e4')
