@@ -69,9 +69,37 @@ function NodeFactory(position){
     }
 }
 
+function getLegalMoves(space) {
+    const [x,y] = space;
+    let legalMoves = [];
+    let possibleMoves = [
+        [x-2, y-1],
+        [x-2, y+1],
+        [x+2, y-1],
+        [x+2, y+1],
+        [x+1, y+2],
+        [x-1, y+2],
+        [x+1, y-2],
+        [x-1, y-2]
+    ]
+
+    for(const position of possibleMoves){
+        const [x, y] = position;
+
+        if(x < 1 || y < 1 || x > 8 || y > 8){
+            continue;
+        }
+        legalMoves.push(position);
+    }
+    return legalMoves;
+}
+
 function knightMoves(spaceA, spaceB, knightDecisionTree = {}){
     // Assume spaces are given in chess notation
     let positionA = NodeFactory(spaceA);
+    
+    let possibleMoves = getLegalMoves(positionA.coordN);
 }
 
-knightMoves('a1', 'e4')
+
+knightMoves('e6', 'b4')
