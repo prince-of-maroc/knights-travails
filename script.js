@@ -94,11 +94,27 @@ function getLegalMoves(space) {
     return legalMoves;
 }
 
-function knightMoves(spaceA, spaceB, knightDecisionTree = {}){
-    // Assume spaces are given in chess notation
-    let positionA = NodeFactory(spaceA);
+function buildDecisionTree(space, decisionTree = {}, visited = new Set()){
+    visited.add(space);
+    let possibleMoves = getLegalMoves(convertToCoordinates(space));
     
-    let possibleMoves = getLegalMoves(positionA.coordN);
+    decisionTree[space] = [];
+    possibleMoves.forEach(move => {
+        move = convertToChessNotation(move);
+        if(!visited.has(move)){
+            visited.add(move);
+            decisionTree[space].push(move);
+        }
+    })
+
+    for(let possibleMove of decisionTree[space]){
+        buildDecisionTree(possibleMove, decisionTree, visited)
+    }
+    return decisionTree;
+}
+
+function knightMoves(spaceA, spaceB){
+    let decisionTree = buildDecisionTree(spaceA);
 }
 
 
