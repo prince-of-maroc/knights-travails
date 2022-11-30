@@ -1,4 +1,4 @@
-function convertToChessNotation(coords){
+function convertToChessNotation(coords){ // Convert coordinate notation to lettered chess notation.
     const [x, y] = coords;
     let letter;
     switch(x) {
@@ -30,7 +30,7 @@ function convertToChessNotation(coords){
     return letter+y;
 }
 
-function convertToCoordinates(chessNotion){
+function convertToCoordinates(chessNotion){ // Convert chess notation to an x,y array pair.
     const [letter, y] = chessNotion;
     let x;
     switch(letter){
@@ -62,7 +62,7 @@ function convertToCoordinates(chessNotion){
     return [x,parseInt(y)]
 }
 
-function getLegalMoves(space) {
+function getPossibleMoves(space) { // Return an array of legal moves for a knight from a space given as a parameter.
     const [x,y] = space;
     let legalMoves = [];
     let possibleMoves = [
@@ -87,29 +87,27 @@ function getLegalMoves(space) {
     return legalMoves;
 }
 
-function clone (src) {
-    return JSON.parse(JSON.stringify(src));
+function clone (x) { // Create a deep clone of whatever data is given as a parameter.
+    return JSON.parse(JSON.stringify(x));
 }
 
 
-function buildDecisionTree(space, decisionTree = {}){
-    let possibleMoves = getLegalMoves(convertToCoordinates(space));
+function buildDecisionTree(space, decisionTree = {}){ // Recursively create an adjacency list of all possible knight moves.
+    let possibleMoves = getPossibleMoves(convertToCoordinates(space));
     
     decisionTree[space] = [];
-    possibleMoves.forEach(move => {
-        move = convertToChessNotation(move);
-        decisionTree[space].push(move);
+    possibleMoves.forEach(possibleSpace => {
+        decisionTree[space].push(convertToChessNotation(possibleSpace));
     })
 
     for(let possibleMove of decisionTree[space]){
-        if(!decisionTree.hasOwnProperty(possibleMove)){
-            buildDecisionTree(possibleMove, decisionTree)
-        }
+        if(decisionTree.hasOwnProperty(possibleMove)) continue; // If space is already in adj list, skip it.
+        buildDecisionTree(possibleMove, decisionTree); // Else, recursively call the function on the space.
     }
     return decisionTree;
 }
 
-function knightMoves(spaceA, spaceB){
+function knightMoves(spaceA, spaceB){ // Calculate and return the shortest path a knight can take using BFS
     let decisionTree = buildDecisionTree(spaceA);
 
     let queue = [
@@ -121,28 +119,24 @@ function knightMoves(spaceA, spaceB){
     ];
 
     while(queue.length > 0){
-        let currentObj = queue.shift();
-        let pastStep = clone(currentObj.pastSteps);
-        pastStep.push(currentObj.space);
-        if(currentObj.space == spaceB){
-            console.log(
-                `You made it in ${currentObj.step} moves. Here is your path: `
-            )
-            currentObj.pastSteps.forEach(step => console.log(step));
-            console.log(currentObj.space);
+        let current = queue.shift();
+
+        let pastSteps = clone(current.pastSteps);
+        pastSteps.push(current.space);
+
+        if(current.space == spaceB){
+            console.log(`You made it in ${current.step} moves. Here is your path: `)
+            pastSteps.forEach(step => console.log(step));
             return;
         }
         
-        decisionTree[currentObj.space].forEach(space => {
-            let step2 = currentObj.step + 1;
+        decisionTree[current.space].forEach(space => {
+            let step = current.step + 1;
             queue.push({
                 space,
-                step: step2,
-                pastSteps: pastStep
+                step: step,
+                pastSteps: pastSteps
             })
         })
     }
 }
-
-
-knightMoves('a1', 'e4');
