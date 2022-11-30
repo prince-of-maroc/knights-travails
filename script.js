@@ -87,28 +87,58 @@ function getLegalMoves(space) {
     return legalMoves;
 }
 
-function buildDecisionTree(space, decisionTree = {}, visited = new Set()){
-    visited.add(space);
+function clone (src) {
+    return JSON.parse(JSON.stringify(src));
+}
+
+
+function buildDecisionTree(space, decisionTree = {}){
     let possibleMoves = getLegalMoves(convertToCoordinates(space));
     
     decisionTree[space] = [];
     possibleMoves.forEach(move => {
         move = convertToChessNotation(move);
-        if(!visited.has(move)){
-            visited.add(move);
-            decisionTree[space].push(move);
-        }
+        decisionTree[space].push(move);
     })
 
     for(let possibleMove of decisionTree[space]){
-        buildDecisionTree(possibleMove, decisionTree, visited)
+        if(!decisionTree.hasOwnProperty(possibleMove)){
+            buildDecisionTree(possibleMove, decisionTree)
+        }
     }
     return decisionTree;
 }
 
 function knightMoves(spaceA, spaceB){
     let decisionTree = buildDecisionTree(spaceA);
+
+    let queue = [
+        {
+            space: spaceA,
+            step: 0,
+            pastSteps: []
+        }
+    ];
+
+    while(queue.length > 0){
+        let currentObj = queue.shift();
+        let pastStep = clone(currentObj.pastSteps);
+        pastStep.push(currentObj.space);
+        if(currentObj.space == spaceB){
+            console.log(currentObj.space)
+            return currentObj.pastSteps;
+        }
+        
+        decisionTree[currentObj.space].forEach(space => {
+            let step2 = currentObj.step + 1;
+            queue.push({
+                space,
+                step: step2,
+                pastSteps: pastStep
+            })
+        })
+    }
 }
 
 
-knightMoves('e6', 'b4')
+console.log(knightMoves('a1', 'e4'))
