@@ -62,13 +62,6 @@ function convertToCoordinates(chessNotion){
     return [x,parseInt(y)]
 }
 
-function NodeFactory(position){
-    return {
-        chessN: position,
-        coordN: convertToCoordinates(position)
-    }
-}
-
 function getLegalMoves(space) {
     const [x,y] = space;
     let legalMoves = [];
