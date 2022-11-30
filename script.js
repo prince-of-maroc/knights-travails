@@ -125,8 +125,12 @@ function knightMoves(spaceA, spaceB){
         let pastStep = clone(currentObj.pastSteps);
         pastStep.push(currentObj.space);
         if(currentObj.space == spaceB){
-            console.log(currentObj.space)
-            return currentObj.pastSteps;
+            console.log(
+                `You made it in ${currentObj.step} moves. Here is your path: `
+            )
+            currentObj.pastSteps.forEach(step => console.log(step));
+            console.log(currentObj.space);
+            return;
         }
         
         decisionTree[currentObj.space].forEach(space => {
@@ -141,4 +145,4 @@ function knightMoves(spaceA, spaceB){
 }
 
 
-console.log(knightMoves('a1', 'e4'))
+knightMoves('a1', 'e4');
